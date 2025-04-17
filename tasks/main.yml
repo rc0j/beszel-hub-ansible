@@ -1,0 +1,20 @@
+---
+- name: Download Beszel
+  ansible.builtin.get_url:
+    url: "{{ beszel_download_url }}"
+    dest: "{{ beszel_workdir }}"
+    mode: "0755"
+
+- name: Extract tarball
+  ansible.builtin.unarchive:
+    src: "/opt/beszel/beszel_{{ beszel_os }}_{{ beszel_arch }}.tar.gz"
+    dest: "{{ beszel_workdir }}"
+    remote_src: true
+
+- name: Make binary executable
+  ansible.builtin.file:
+    path: "{{ beszel_workdir }}/beszel"
+    state: file
+    owner: root
+    group: root
+    mode: "0755"

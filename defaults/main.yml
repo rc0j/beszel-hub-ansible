@@ -1,0 +1,16 @@
+#SPDX-License-Identifier: MIT-0
+---
+beszel_version: "latest"
+beszelhub_base_url: "https://github.com/henrygd/beszel/releases/{{ beszel_version }}/download"
+
+beszel_arch_map:
+  x86_64: "amd64"
+  armv6l: "arm"
+  armv7l: "arm"
+  aarch64: "arm64"
+
+beszel_os: "{{ ansible_system | lower }}"
+beszel_arch: "{{ beszel_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+beszel_download_url: "{{ beszelhub_base_url }}/beszel_{{ beszel_os }}_{{ beszel_arch }}.tar.gz" # TODO: maybe we should handle this in a more legible way..
+
+beszel_workdir: "/opt/beszel"
