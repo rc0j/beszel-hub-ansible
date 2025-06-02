@@ -1,20 +1,38 @@
 ---
+
+- name: Create Beszel directory
+  ansible.builtin.file:
+    path: "{{ beszel_workdir}}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
 - name: Download Beszel
   ansible.builtin.get_url:
     url: "{{ beszel_download_url }}"
-    dest: "{{ beszel_workdir }}"
+    dest: "{{ beszel_workdir }}/beszel"
     mode: "0755"
 
-- name: Extract tarball
-  ansible.builtin.unarchive:
-    src: "/opt/beszel/beszel_{{ beszel_os }}_{{ beszel_arch }}.tar.gz"
-    dest: "{{ beszel_workdir }}"
-    remote_src: true
-
-- name: Make binary executable
+- name: Beszel exec
   ansible.builtin.file:
     path: "{{ beszel_workdir }}/beszel"
     state: file
     owner: root
     group: root
     mode: "0755"
+
+- name: Copy Beszel service
+  ansible.builtin.template:
+    src: "beszel-hub.j2"
+    dest: "/etc/systemd/system/beszel-hub.service"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable Beszel service
+  ansible.builtin.systemd:
+    name: beszel.service
+    enabled: true
+    state: started
+    daemon_reload: true  
